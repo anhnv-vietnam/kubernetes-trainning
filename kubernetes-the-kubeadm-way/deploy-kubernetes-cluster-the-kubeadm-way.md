@@ -130,7 +130,9 @@ kubeadm join 172.31.24.250:6443 --token n6w2da.oaifzuls6yqudn9p \
 ```
 
 ## Bước 10: Deploy network cho cụm kubernetes (Sử dụng calico)
+```
 kubectl --kubeconfig=/etc/kubernetes/admin.conf create -f https://docs.projectcalico.org/v3.15/manifests/calico.yaml
+```
 
 ## Bước 11: Download và cài đặt etcd utilities.
 ```
