@@ -5,6 +5,7 @@
 3 server tối thiểu 2 core cpu, 2 GB ram để cài đặt 3 node master của cụm (để quá trình demo đơn giản thì các server cần có kết nối đến internet).<br>
 Nếu có điều kiện thì thêm 1 server tối thiểu 1 core cpu, 1 GB ram để cài worker node.<br>
 Để đơn giản thì các server trong cụm có thông kết nối port 1024-65535 với nhau. (chi tiết các kết nối mà k8s sử dụng [xem ở đây](https://kubernetes.io/docs/reference/ports-and-protocols/))
+![Mô hình triển khai](https://d33wubrfki0l68.cloudfront.net/d1411cded83856552f37911eb4522d9887ca4e83/b94b2/images/kubeadm/kubeadm-ha-topology-stacked-etcd.svg)
 
 ## Bước 1: Set các biến môi trường (thực hiện trên các server trong cụm bằng user root. Chú ý thay ip và hostname của các server)
 ```
