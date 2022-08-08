@@ -2,6 +2,7 @@
 
 ## Bước chuẩn bị:
 3 server tối thiểu 1 core cpu, 1 GB ram (để quá trình demo đơn giản thì các server cần có kết nối đến internet).<br>Các server trong cụm có thông kết nối port 8379-8380 với nhau.
+![Mô hình triển khai](https://d33wubrfki0l68.cloudfront.net/ad49fffce42d5a35ae0d0cc1186b97209d86b99c/5a6ae/images/kubeadm/kubeadm-ha-topology-external-etcd.svg)
 <br>
 <br>
 ## Bước 1: Set các biến môi trường (thực hiện trên từng server trong cụm. Chú ý thay các ip và hostname tương ứng của server)
