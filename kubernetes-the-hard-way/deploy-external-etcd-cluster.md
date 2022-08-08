@@ -4,7 +4,7 @@
 3 server tối thiểu 1 core cpu, 1 GB ram (để quá trình demo đơn giản thì các server cần có kết nối đến internet).<br>Các server trong cụm có thông kết nối port 8379-8380 với nhau.
 <br>
 <br>
-## Bước 1: Set các biến môi trường (thực hiện trên từng server trong cụm)
+## Bước 1: Set các biến môi trường (thực hiện trên từng server trong cụm. Chú ý thay các ip và hostname tương ứng của server)
 ```
 IP1=172.31.26.202
 HOSTNAME1=ip-172-31-26-202.ec2.internal
