@@ -1,9 +1,11 @@
-Deploy a ETCD cluster the hard way - Dựng một cụm ETCD kiểu tay to
+# Deploy a ETCD cluster the hard way - Dựng một cụm ETCD kiểu tay to
 
-Bước chuẩn bị: 3 server (để quá trình demo đơn giản thì các server cần có kết nối internet), giữa các server trong cụm có thông kết nối port 8379-8380.
-
-Bước 1: Set các biến môi trường (thực hiện trên các server trong cụm)
-
+## Bước chuẩn bị:
+3 server tối thiểu 1 core cpu, 1 GB ram (để quá trình demo đơn giản thì các server cần có kết nối đến internet).<br>Các server trong cụm có thông kết nối port 8379-8380 với nhau.
+<br>
+<br>
+## Bước 1: Set các biến môi trường (thực hiện trên từng server trong cụm)
+```
 IP1=172.31.26.202
 HOSTNAME1=ip-172-31-26-202.ec2.internal
 IP2=172.31.17.92
@@ -13,9 +15,10 @@ HOSTNAME3=ip-172-31-26-94.ec2.internal
 
 INTERNAL_IP=$(ip addr show eth0 | grep "inet " | awk '{print $2}' | cut -d / -f 1)
 HOSTNAME=$(hostname)
+```
 
-Bước 2: Generate Certificate Authority (chỉ cần thực hiện trên 1 server)
-
+## Bước 2: Generate Certificate Authority (chỉ cần thực hiện trên 1 server)
+```
 # Create private key for CA
 openssl genrsa -out ca.key 2048
 
@@ -27,9 +30,10 @@ openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
 
 # Self sign the csr using its own private key
 openssl x509 -req -in ca.csr -signkey ca.key -CAcreateserial  -out ca.crt -days 1000
+```
 
-Bước 3: Generate ETCD Server Certificate
-
+## Bước 3: Generate ETCD Server Certificate (chỉ cần thực hiện trên 1 server)
+```
 cat > openssl-etcd.cnf <<EOF
 [req]
 req_extensions = v3_req
@@ -49,21 +53,23 @@ EOF
 openssl genrsa -out etcd-server.key 2048
 openssl req -new -key etcd-server.key -subj "/CN=etcd-server" -out etcd-server.csr -config openssl-etcd.cnf
 openssl x509 -req -in etcd-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial  -out etcd-server.crt -extensions v3_req -extfile openssl-etcd.cnf -days 1000
+```
 
-Bước 4: Copy các file Certificate sang tất cả các server trong cụm etcd. (Nếu có kết nối thì có thể dùng scp, còn không thì đẩy file lên thủ công)
-
+## Bước 4: Copy các file Certificate sang tất cả các server trong cụm etcd. (Nếu có kết nối thì có thể dùng scp, còn không thì đẩy file lên thủ công)
+```
 for instance in ${IP2} ${IP3}; do
   scp -i "mykey.pem" ca.crt ca.key \
     etcd-server.key etcd-server.crt \
     ${instance}:~/
 done
+```
 
-
-Bước 4: Download và cài đặt etcd (Thực hiện trên các server trong cụm etcd)
-
+## Bước 5: Download và cài đặt etcd (Thực hiện trên các server trong cụm etcd).
+```
+# Download etcd binary
 wget "https://github.com/coreos/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-amd64.tar.gz"
 
-#Extract and install the etcd server and the etcdctl command line utility:
+# Extract and install the etcd server and the etcdctl command line utility:
 {
   tar -xvf etcd-v3.3.9-linux-amd64.tar.gz
   sudo mv etcd-v3.3.9-linux-amd64/etcd* /usr/local/bin/
@@ -75,8 +81,7 @@ wget "https://github.com/coreos/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-
   sudo cp ca.crt etcd-server.key etcd-server.crt /etc/etcd/
 }
 
-#/etc/systemd/system/etcd.service
-## etcd service file
+# Create etcd service file
 cat <<EOF | sudo tee /etc/systemd/system/etcd.service
 [Unit]
 Description=etcd
@@ -108,16 +113,17 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-## etcd service file
-
-
+# Reload systemd and enable etcd service
 {
   sudo systemctl daemon-reload
   sudo systemctl enable etcd
   sudo systemctl start etcd
   sudo systemctl status etcd
 }
+```
 
-
+## Bước 6: Kiểm tra trạng thái etcd cluster.
+```
 export ETCDCTL_API=3
 etcdctl member list   --endpoints=https://127.0.0.1:8379   --cacert=/etc/etcd/ca.crt   --cert=/etc/etcd/etcd-server.crt   --key=/etc/etcd/etcd-server.key
+```
