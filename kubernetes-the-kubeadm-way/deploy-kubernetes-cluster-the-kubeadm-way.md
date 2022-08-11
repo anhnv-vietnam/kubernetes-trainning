@@ -47,11 +47,8 @@ EOF
 sudo systemctl restart haproxy
 ```
 
-## Bước 2-8: Thực hiện trên các node trong cụm k8s
+## Bước 2-8: Thực hiện trên các node trong cụm k8s (bằng user root)
 ```
-# Thực hiện với user root
-sudo su -
-
 # Set các biến môi trường (ở bước 1)
 
 # Bước 2: Disable firewall (nếu có)
