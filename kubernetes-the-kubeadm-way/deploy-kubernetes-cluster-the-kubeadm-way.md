@@ -146,7 +146,7 @@ Extract and install the etcd server and the etcdctl command line utility:
 
 ## Bước 12: Kiểm tra trạng thái của etcd cluster.
 ```
-ETCDCTL_API=3 etcdctl --endpoints ${LB}:2379 \
+ETCDCTL_API=3 etcdctl --endpoints ${INTERNAL_IP}:2379 \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
